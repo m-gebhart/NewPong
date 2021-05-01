@@ -48,7 +48,7 @@ void ANP_Ball::Launch()
 {
 	if(!BallLaunched)
 	{
-		SM_Ball->AddImpulse(FVector(500.f,1000.0f,0.0f), FName(), true);
+		SM_Ball->AddImpulse(FVector(0.0f,500.0f,0.0f), FName(), true);
 		BallLaunched = true;
 	}
 	
