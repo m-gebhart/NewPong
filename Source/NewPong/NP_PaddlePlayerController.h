@@ -28,6 +28,19 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 	
 	void Launch();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool P1Selected;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool P2Selected;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int P1Soundtrack;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int P2Soundtrack;
+	
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ANP_Ball> BallObj;
 
