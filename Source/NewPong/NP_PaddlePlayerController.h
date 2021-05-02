@@ -55,5 +55,9 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 	public:
 		void SpawnBall();
 
+	UFUNCTION(BlueprintCallable)
+		void StartGame();
+
+	
 	
 };

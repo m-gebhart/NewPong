@@ -7,6 +7,7 @@
 
 #include "NP_Ball.generated.h"
 
+//class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
@@ -27,16 +28,22 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-		UStaticMeshComponent* SM_Ball;
+	UStaticMeshComponent* SM_Ball;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UProjectileMovementComponent* ProjectileMovementComponent;
 	
-public:	
+public:
+
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 UFUNCTION()
 	UStaticMeshComponent* GetBall();
+
+	UFUNCTION()
+			void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+				class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 };

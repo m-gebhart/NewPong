@@ -22,7 +22,7 @@ void ANP_PaddlePlayerController::BeginPlay()
 
 	FViewTargetTransitionParams Params;
 	SetViewTarget(CameraActors[0], Params);
-	SpawnBall();
+	//SpawnBall();
 }
 
 void ANP_PaddlePlayerController::SetupInputComponent()
@@ -66,4 +66,9 @@ void ANP_PaddlePlayerController::SpawnBall()
 	}
 
 	Launch();
+}
+
+void ANP_PaddlePlayerController::StartGame()
+{
+	SpawnBall();
 }
