@@ -68,6 +68,8 @@ UStaticMeshComponent* ANP_Ball::GetBall()
 	return SM_Ball;
 }
 
+
+//Wird nicht aufgerufen, da ich es nicht schaffe Kollisionen aus dem Code heraus zu generieren.
 void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
