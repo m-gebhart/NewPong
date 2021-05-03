@@ -68,6 +68,19 @@ UStaticMeshComponent* ANP_Ball::GetBall()
 	return SM_Ball;
 }
 
+void ANP_Ball::GoalScored(bool Side)
+{
+	
+	if(Side)
+	{
+		GetWorld()->GetGameState<ANP_GameStateBase>()->P1Score++;
+	}
+	else
+	{
+		GetWorld()->GetGameState<ANP_GameStateBase>()->P2Score++;
+	}
+}
+
 
 //Wird nicht aufgerufen, da ich es nicht schaffe Kollisionen aus dem Code heraus zu generieren.
 void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,

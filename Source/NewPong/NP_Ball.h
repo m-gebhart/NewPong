@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
+#include "NP_GameStateBase.h"
 #include "NP_Ball.generated.h"
 
 //class USphereComponent;
@@ -41,6 +41,9 @@ public:
 
 UFUNCTION()
 	UStaticMeshComponent* GetBall();
+
+	UFUNCTION(BlueprintCallable)
+	void GoalScored(bool Side);
 
 	UFUNCTION()
 			void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
