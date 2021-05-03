@@ -18,6 +18,7 @@
 *.so
 *.dylib
 *.dll
+!Binaries/Win64/*.dll
 # except FMOD plugin files
 !Plugins/FMODStudio/Binaries/Win64/*.dll
 

@@ -314,14 +314,16 @@ public:
     virtual void OnUpdateTransform(EUpdateTransformFlags UpdateTransformFlags, ETeleportType Teleport = ETeleportType::None) override;
     // End USceneComponent Interface
 
+protected:
+    // Begin ActorComponent interface.
+    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+    
 private:
-// Begin ActorComponent interface.
 #if WITH_EDITORONLY_DATA
     virtual void OnRegister() override;
 #endif
     virtual void OnUnregister() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 // End ActorComponent interface.
 
 #if WITH_EDITORONLY_DATA
