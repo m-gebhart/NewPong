@@ -4,6 +4,7 @@
 #include "NP_Ball.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 ANP_Ball::ANP_Ball()
@@ -51,12 +52,42 @@ void ANP_Ball::Tick(float DeltaTime)
 
 }
 
+void ANP_Ball::ResetBall()
+{
+	this->SetActorLocation(FVector(0,0,0));
+	
+	this->Reset();
+	BallLaunched = false;
+	Launch();
+}
+
 void ANP_Ball::Launch()
 {
 	if(!BallLaunched)
 	{
+		YImpulse = FMath::RandRange(MinYForce, TotalStartForce);
+		XImpulse = TotalStartForce - YImpulse;
+
+		int i = FMath::RandRange(0,3);
+
+		switch (i)
+		{
+			case 0:
+				break;
+			case 1:
+				YImpulse = -YImpulse;
+			break;
+			case 2:
+				XImpulse = -XImpulse;
+			break;
+			case 3:
+				YImpulse = -YImpulse;
+				XImpulse = -XImpulse;
+			break;
+		}
 		
-		SM_Ball->AddImpulse(FVector(0.0f,500.0f,0.0f), FName(), true);
+		
+		SM_Ball->AddImpulse(FVector(XImpulse,YImpulse,0.0f), FName(), true);
 		BallLaunched = true;
 		UE_LOG(LogTemp, Warning, TEXT("EK"));
 	}
@@ -79,6 +110,8 @@ void ANP_Ball::GoalScored(bool Side)
 	{
 		GetWorld()->GetGameState<ANP_GameStateBase>()->P2Score++;
 	}
+	GetWorld()->GetFirstPlayerController<ANP_PaddlePlayerController>()->SpawnBall();
+	Destroy();
 }
 
 
@@ -89,10 +122,10 @@ void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 	UE_LOG(LogTemp, Warning, TEXT("I just started runningKEK"));
 	if(SweepResult.GetActor()->GetName()== "RightGoal")
 	{
-		UE_LOG(LogTemp, Warning, TEXT("I just started running"));
+		GoalScored((true));
 	}
 	else if(SweepResult.GetActor()->GetName()== "LeftGoal"){
-		UE_LOG(LogTemp, Warning, TEXT("I just started running2"));
+		GoalScored(false);
 	}
 	
 }

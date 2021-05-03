@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "NP_GameStateBase.h"
+#include "NP_PaddlePlayerController.h"
 #include "NP_Ball.generated.h"
 
 //class USphereComponent;
@@ -32,13 +33,22 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UProjectileMovementComponent* ProjectileMovementComponent;
+
+	float XImpulse;
+	float YImpulse;
 	
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float TotalStartForce;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MinYForce;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void ResetBall();
+	
 UFUNCTION()
 	UStaticMeshComponent* GetBall();
 
