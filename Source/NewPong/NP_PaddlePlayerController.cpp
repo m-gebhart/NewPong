@@ -8,7 +8,6 @@
 #include "Camera/CameraActor.h"
 
 #include "NP_Paddle.h"
-//#include Ball.h
 
 ANP_PaddlePlayerController::ANP_PaddlePlayerController()
 {
@@ -17,12 +16,20 @@ ANP_PaddlePlayerController::ANP_PaddlePlayerController()
 void ANP_PaddlePlayerController::BeginPlay()
 {
 
+	Paddle = Cast<ANP_Paddle>(GetPawn());
 	TArray<AActor*> CameraActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ACameraActor::StaticClass(), CameraActors);
 
 	FViewTargetTransitionParams Params;
 	SetViewTarget(CameraActors[0], Params);
 	//SpawnBall();
+	
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		FActorSpawnParameters SpawnParams;
+		LeftPaddle = World->SpawnActor<ANP_Paddle>(PaddleObj, LeftPaddleSpawnLocation, FRotator(0,0,0), SpawnParams);
+	}
 }
 
 void ANP_PaddlePlayerController::SetupInputComponent()
@@ -31,22 +38,34 @@ void ANP_PaddlePlayerController::SetupInputComponent()
 
 	EnableInput(this);
 
-	InputComponent->BindAxis("MovementWASD", this, &ANP_PaddlePlayerController::Movement);
-	
+	InputComponent->BindAxis("MovementWASD", this, &ANP_PaddlePlayerController::MovementWASD);
+	InputComponent->BindAxis("MovementArrowKeys", this, &ANP_PaddlePlayerController::Movement);
 }
 
 
 
 void ANP_PaddlePlayerController::Movement(float f)
 {
-	
-	auto MyPawn = Cast<ANP_Paddle>(GetPawn());
+	Paddle = Cast<ANP_Paddle>(GetPawn());
+	Paddle->Movement(f);
+}
 
-	if(MyPawn)
+void ANP_PaddlePlayerController::MovementWASD(float f)
+{
+
+	float MoveDistance = f * LeftPaddleSpeed * GetWorld()->GetDeltaSeconds();
+	if(LeftPaddle->GetActorLocation().X + MoveDistance > 700)
 	{
-		MyPawn->Movement((f));
+		LeftPaddle->SetActorLocation(FVector(700,LeftPaddle->GetActorLocation().Y, 0));
 	}
-	
+	else if(LeftPaddle->GetActorLocation().X + MoveDistance < -700)
+	{
+		LeftPaddle->SetActorLocation(FVector(-700,LeftPaddle->GetActorLocation().Y, 0));
+	}
+	else
+	{
+		LeftPaddle->SetActorLocation(LeftPaddle->GetActorLocation()+ FVector(MoveDistance,0,0));
+	}
 }
 
 void ANP_PaddlePlayerController::Launch()
@@ -57,6 +76,8 @@ void ANP_PaddlePlayerController::Launch()
 
 void ANP_PaddlePlayerController::SpawnBall()
 {
+
+	
 	if(!MyBall)
 		MyBall = nullptr;
 

@@ -36,5 +36,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Movement(float f);
-
+	virtual void MovementWASD(float f);
 };

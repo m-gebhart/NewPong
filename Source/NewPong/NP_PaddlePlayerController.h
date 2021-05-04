@@ -11,6 +11,7 @@
  */
 
 class ANP_Ball;
+class ANP_Paddle;
 
 UCLASS()
 class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
@@ -25,6 +26,7 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 	protected:
 	virtual void BeginPlay() override;
 	void Movement(float f);
+	void MovementWASD(float f);
 	
 	void Launch();
 
@@ -44,8 +46,20 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<ANP_Ball> BallObj;
 
-	ANP_Ball* MyBall;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ANP_Paddle> PaddleObj;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector LeftPaddleSpawnLocation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LeftPaddleSpeed;
+	
+	ANP_Ball* MyBall;
+	ANP_Paddle* LeftPaddle;
+	ANP_Paddle* Paddle;
+	
+	
 	FVector SpawnLocation = FVector(0.0f,0.0f,0.0f);
 	FRotator SpawnRotation = FRotator(0.0f,0.0f,0.0f);
 

@@ -1,10 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "NP_Paddle.h"
-
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
+
 
 
 // Sets default values
@@ -30,7 +29,7 @@ ANP_Paddle::ANP_Paddle()
 void ANP_Paddle::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -44,10 +43,14 @@ void ANP_Paddle::Tick(float DeltaTime)
 void ANP_Paddle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ANP_Paddle::Movement(float f)
+{
+	AddMovementInput(FVector(f,0.0f,0.0f), 1.0f, false);
+}
+
+void ANP_Paddle::MovementWASD(float f)
 {
 	AddMovementInput(FVector(f,0.0f,0.0f), 1.0f, false);
 }

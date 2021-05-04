@@ -2,5 +2,6 @@
 
 
 #include "NewPongGameModeBase.h"
+#include "NP_LeftPaddlePlayerController.h"
 
 //TEST
