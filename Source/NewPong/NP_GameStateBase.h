@@ -14,12 +14,7 @@ class NEWPONG_API ANP_GameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
 
-	public:
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	int P1Score;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	int P2Score;
 
 	
 };

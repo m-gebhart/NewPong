@@ -5,6 +5,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Math/UnrealMathUtility.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 
 // Sets default values
 ANP_Ball::ANP_Ball()
@@ -42,7 +45,7 @@ void ANP_Ball::BeginPlay()
 	ProjectileMovementComponent->Velocity.Z = 0.0f;
 	
 	SM_Ball->OnComponentBeginOverlap.AddDynamic(this, &ANP_Ball::OnOverlapBegin);
-	
+	Controller = GetWorld()->GetFirstPlayerController<ANP_PaddlePlayerController>();
 }
 
 // Called every frame
@@ -104,14 +107,24 @@ void ANP_Ball::GoalScored(bool Side)
 	
 	if(Side)
 	{
-		GetWorld()->GetGameState<ANP_GameStateBase>()->P1Score++;
+		Controller->P1Score++;
+		Controller->P1Scored();
+		//GetWorld()->GetGameState<ANP_GameStateBase>()->P1Score++;
 	}
 	else
 	{
-		GetWorld()->GetGameState<ANP_GameStateBase>()->P2Score++;
+		Controller->P2Score++;
+		Controller->P2Scored();
+		//GetWorld()->GetGameState<ANP_GameStateBase>()->P2Score++;
 	}
 	GetWorld()->GetFirstPlayerController<ANP_PaddlePlayerController>()->SpawnBall();
 	Destroy();
+
+	if(UKismetMathLibrary::Abs(Controller->P1Score - Controller->P2Score) >= 9)
+	{
+		//UKismetSystemLibrary::QuitGame(GetWorld(),Controller,,true);
+		GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
+	}
 }
 
 

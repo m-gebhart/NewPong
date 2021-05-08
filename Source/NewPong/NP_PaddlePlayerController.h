@@ -54,9 +54,14 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LeftPaddleSpeed;
+
 	
 	ANP_Ball* MyBall;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ANP_Paddle* LeftPaddle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ANP_Paddle* Paddle;
 	
 	
@@ -72,6 +77,21 @@ class NEWPONG_API ANP_PaddlePlayerController : public APlayerController
 	UFUNCTION(BlueprintCallable)
 		void StartGame();
 
-	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "StartGame")
+	void StartGameBP();
+
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Score")
+	void P1Scored();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Score")
+	void P2Scored();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int P1Score;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int P2Score;
+
 	
 };

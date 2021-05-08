@@ -92,4 +92,22 @@ void ANP_PaddlePlayerController::SpawnBall()
 void ANP_PaddlePlayerController::StartGame()
 {
 	SpawnBall();
+
+	StartGameBP();
 }
+
+void ANP_PaddlePlayerController::P1Scored_Implementation()
+{
+	//add code here
+}
+
+void ANP_PaddlePlayerController::P2Scored_Implementation()
+{
+	//add code here
+} 
+
+void ANP_PaddlePlayerController::StartGameBP_Implementation()
+{
+	//add code here
+} 
+
