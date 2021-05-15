@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h" 
 #include "NP_GameStateBase.h"
 #include "NP_PaddlePlayerController.h"
 #include "NP_Ball.generated.h"
@@ -24,6 +26,13 @@ public:
 
 	bool BallLaunched;
 	
+private:
+	UPROPERTY()
+	USoundConcurrency* soundConcurreny;
+
+	UPROPERTY()
+	FVector2D MinMaxPitch = FVector2D(0.95f, 1.05f);
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,19 +41,29 @@ protected:
 	UStaticMeshComponent* SM_Ball;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UProjectileMovementComponent* ProjectileMovementComponent;
+	UProjectileMovementComponent* ProjectileMovementComponent;
 
 	float XImpulse;
 	float YImpulse;
+
 	
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float TotalStartForce;
+	float TotalStartForce;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MinYForce;
-	// Called every frame
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* CollisionSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MinMaxVolumeMultiplier = FVector2D(0.85f, 1.15f);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MinMaxPitchIncreasePerCollision = FVector2D(0.05f, 0.25f);;
+	
 	virtual void Tick(float DeltaTime) override;
 
 	void ResetBall();
@@ -56,8 +75,10 @@ UFUNCTION()
 	void GoalScored(bool Side);
 
 	UFUNCTION()
-			void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
-				class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	ANP_PaddlePlayerController* Controller;
 	

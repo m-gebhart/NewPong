@@ -1,50 +1,46 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+    
+    
+    #include "NP_Ball.h"
 
+#include <PxBatchQueryDesc.h>
 
-#include "NP_Ball.h"
 #include "Components/StaticMeshComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
-#include "Math/UnrealMathUtility.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
-
-
-// Sets default values
-ANP_Ball::ANP_Ball()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	SM_Ball = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ball"));
-	RootComponent = SM_Ball;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-	this->SM_Ball->SetStaticMesh(SphereMeshAsset.Object);
-	
-	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
-	
-}
-
-
-
-// Called when the game starts or when spawned
-void ANP_Ball::BeginPlay()
-{
-	Super::BeginPlay();
-	SM_Ball -> SetSimulatePhysics(true);
-	SM_Ball -> SetEnableGravity(false);
-	SM_Ball -> SetConstraintMode(EDOFMode::XYPlane);
-	SM_Ball -> SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	SM_Ball -> SetCollisionProfileName(TEXT("PhysicsActor"));
-
-	
-	
-	
+    #include "GameFramework/ProjectileMovementComponent.h"
+	#include "Kismet/GameplayStatics.h" 
+    #include "Math/UnrealMathUtility.h"
+    #include "Kismet/KismetMathLibrary.h"
+    #include "Kismet/KismetSystemLibrary.h"
+    
+    ANP_Ball::ANP_Ball()
+    {
+    	PrimaryActorTick.bCanEverTick = true;
+    
+    	SM_Ball = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ball"));
+    	RootComponent = SM_Ball;
+    	static ConstructorHelpers::FObjectFinder<UStaticMesh>SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+    	this->SM_Ball->SetStaticMesh(SphereMeshAsset.Object);
+    	
+    	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
+    }
+    
+    // Called when the game starts or when spawned
+    void ANP_Ball::BeginPlay()
+    {
+    	Super::BeginPlay();
+    	SM_Ball -> SetSimulatePhysics(true);
+    	SM_Ball -> SetEnableGravity(false);
+    	SM_Ball -> SetConstraintMode(EDOFMode::XYPlane);
+    	SM_Ball -> SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    	SM_Ball -> SetCollisionProfileName(TEXT("PhysicsActor"));
+    
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->Bounciness = 1.0f;
 	ProjectileMovementComponent->Friction = 0.0f;
 	ProjectileMovementComponent->Velocity.Z = 0.0f;
 	
 	SM_Ball->OnComponentBeginOverlap.AddDynamic(this, &ANP_Ball::OnOverlapBegin);
+	SM_Ball->OnComponentHit.AddDynamic(this, &ANP_Ball::OnHit);
 	Controller = GetWorld()->GetFirstPlayerController<ANP_PaddlePlayerController>();
 }
 
@@ -92,7 +88,6 @@ void ANP_Ball::Launch()
 		
 		SM_Ball->AddImpulse(FVector(XImpulse,YImpulse,0.0f), FName(), true);
 		BallLaunched = true;
-		UE_LOG(LogTemp, Warning, TEXT("EK"));
 	}
 	
 }
@@ -127,19 +122,31 @@ void ANP_Ball::GoalScored(bool Side)
 	}
 }
 
-
-//Wird nicht aufgerufen, da ich es nicht schaffe Kollisionen aus dem Code heraus zu generieren.
-void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
-	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("I just started runningKEK"));
 	if(SweepResult.GetActor()->GetName()== "RightGoal")
-	{
 		GoalScored((true));
-	}
-	else if(SweepResult.GetActor()->GetName()== "LeftGoal"){
+	else if(SweepResult.GetActor()->GetName()== "LeftGoal")
 		GoalScored(false);
-	}
-	
 }
 
+void ANP_Ball::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (CollisionSoundCue)
+	{
+		if (!OtherActor->GetName().EndsWith("Wall"))
+		{
+			MinMaxPitch += FVector2D(FMath::RandRange(0.f, MinMaxPitch.X), FMath::RandRange(0.f, MinMaxPitch.Y));
+			UE_LOG(LogTemp, Warning, TEXT("Pitch range changed to %f and %f!"), MinMaxPitch.X, MinMaxPitch.Y);
+		}
+		else
+		{
+			MinMaxPitch = FVector2D(0.95f, 1.05f);
+			UE_LOG(LogTemp, Warning, TEXT("Pitch reset to 1.f and 1.f!"));
+		}
+		const float tempPitch = FMath::RandRange(MinMaxPitch.X, MinMaxPitch.Y);
+		const float tempVolume = FMath::RandRange(MinMaxVolumeMultiplier.X, MinMaxVolumeMultiplier.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Pitch is %f with Volume at %f"), tempPitch, tempVolume);
+		UGameplayStatics::PlaySound2D(GetWorld(), CollisionSoundCue, tempVolume, tempPitch, 0.0f, soundConcurreny, this, false);
+	}
+}
