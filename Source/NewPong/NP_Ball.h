@@ -32,6 +32,9 @@ private:
 
 	UPROPERTY()
 	FVector2D MinMaxPitch = FVector2D(0.95f, 1.05f);
+
+	UPROPERTY()
+	FVector2D PitchCacheVector;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -56,7 +59,10 @@ public:
 	float MinYForce;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USoundCue* CollisionSoundCue;
+	USoundCue* PaddleCollisionSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* WallCollisionSoundCue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D MinMaxVolumeMultiplier = FVector2D(0.4f, 0.5f);

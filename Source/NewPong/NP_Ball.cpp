@@ -42,6 +42,8 @@
 	SM_Ball->OnComponentBeginOverlap.AddDynamic(this, &ANP_Ball::OnOverlapBegin);
 	SM_Ball->OnComponentHit.AddDynamic(this, &ANP_Ball::OnHit);
 	Controller = GetWorld()->GetFirstPlayerController<ANP_PaddlePlayerController>();
+
+    PitchCacheVector = MinMaxPitch;
 }
 
 // Called every frame
@@ -54,7 +56,8 @@ void ANP_Ball::Tick(float DeltaTime)
 void ANP_Ball::ResetBall()
 {
 	this->SetActorLocation(FVector(0,0,0));
-	
+
+    MinMaxPitch = PitchCacheVector;
 	this->Reset();
 	BallLaunched = false;
 	Launch();
@@ -132,15 +135,22 @@ void ANP_Ball::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 
 void ANP_Ball::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (CollisionSoundCue)
+	if (WallCollisionSoundCue && PaddleCollisionSoundCue)
 	{
-		if (!OtherActor->GetName().EndsWith("Wall"))
+		USoundCue* tempSoundCue = nullptr;
+		if (!OtherActor->GetName().EndsWith("Wall")){
 			MinMaxPitch += FVector2D(FMath::RandRange(0.f, MinMaxPitchIncreaseOnPaddle.X), FMath::RandRange(0.f, MinMaxPitchIncreaseOnPaddle.Y));
+			tempSoundCue = PaddleCollisionSoundCue;
+		}
 		else if (MinMaxPitch.X > 0.95f && MinMaxPitch.Y > 0.95f)
+		{
 			MinMaxPitch -= FVector2D(FMath::RandRange(0.f, MinMaxPitchDecreaseOnWall.X), FMath::RandRange(0.f, MinMaxPitchDecreaseOnWall.Y));
-
-		const float tempPitch = FMath::RandRange(MinMaxPitch.X, MinMaxPitch.Y);
+			tempSoundCue = WallCollisionSoundCue;
+		}
+				
 		const float tempVolume = FMath::RandRange(MinMaxVolumeMultiplier.X, MinMaxVolumeMultiplier.Y);
-		UGameplayStatics::PlaySound2D(GetWorld(), CollisionSoundCue, tempVolume, tempPitch, 0.0f, soundConcurreny, this, false);
+		const float tempPitch = FMath::RandRange(MinMaxPitch.X, MinMaxPitch.Y);
+		if (tempSoundCue)
+			UGameplayStatics::PlaySound2D(GetWorld(), tempSoundCue, tempVolume, tempPitch, 0.0f, soundConcurreny, this, false);
 	}
 }
