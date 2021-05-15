@@ -59,10 +59,13 @@ public:
 	USoundCue* CollisionSoundCue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D MinMaxVolumeMultiplier = FVector2D(0.85f, 1.15f);
+	FVector2D MinMaxVolumeMultiplier = FVector2D(0.4f, 0.5f);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D MinMaxPitchIncreasePerCollision = FVector2D(0.05f, 0.25f);;
+	FVector2D MinMaxPitchIncreaseOnPaddle = FVector2D(0.005f, 0.05f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MinMaxPitchDecreaseOnWall = FVector2D(0.01f, 0.017f);
 	
 	virtual void Tick(float DeltaTime) override;
 

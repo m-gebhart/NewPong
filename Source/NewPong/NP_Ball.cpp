@@ -135,18 +135,12 @@ void ANP_Ball::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiv
 	if (CollisionSoundCue)
 	{
 		if (!OtherActor->GetName().EndsWith("Wall"))
-		{
-			MinMaxPitch += FVector2D(FMath::RandRange(0.f, MinMaxPitch.X), FMath::RandRange(0.f, MinMaxPitch.Y));
-			UE_LOG(LogTemp, Warning, TEXT("Pitch range changed to %f and %f!"), MinMaxPitch.X, MinMaxPitch.Y);
-		}
-		else
-		{
-			MinMaxPitch = FVector2D(0.95f, 1.05f);
-			UE_LOG(LogTemp, Warning, TEXT("Pitch reset to 1.f and 1.f!"));
-		}
+			MinMaxPitch += FVector2D(FMath::RandRange(0.f, MinMaxPitchIncreaseOnPaddle.X), FMath::RandRange(0.f, MinMaxPitchIncreaseOnPaddle.Y));
+		else if (MinMaxPitch.X > 0.95f && MinMaxPitch.Y > 0.95f)
+			MinMaxPitch -= FVector2D(FMath::RandRange(0.f, MinMaxPitchDecreaseOnWall.X), FMath::RandRange(0.f, MinMaxPitchDecreaseOnWall.Y));
+
 		const float tempPitch = FMath::RandRange(MinMaxPitch.X, MinMaxPitch.Y);
 		const float tempVolume = FMath::RandRange(MinMaxVolumeMultiplier.X, MinMaxVolumeMultiplier.Y);
-		UE_LOG(LogTemp, Warning, TEXT("Pitch is %f with Volume at %f"), tempPitch, tempVolume);
 		UGameplayStatics::PlaySound2D(GetWorld(), CollisionSoundCue, tempVolume, tempPitch, 0.0f, soundConcurreny, this, false);
 	}
 }
